@@ -14,12 +14,8 @@ import {
   USERNAME,
   __prod__,
 } from './constants';
-import { Post } from './entities/Post';
-import { Updoot } from './entities/Updoot';
 import { User } from './entities/User';
-import { PostResolver } from './resolvers/post';
 import { UserResolver } from './resolvers/user';
-import { createUpdootLoader } from './utils/createUpdootLoader';
 import { createUserLoader } from './utils/createUserLoader';
 
 const main = async () => {
@@ -30,7 +26,7 @@ const main = async () => {
     password: PASSWORD,
     logging: true,
     synchronize: true,
-    entities: [Post, User, Updoot],
+    entities: [User],
   });
   await conn.runMigrations({});
 
@@ -67,7 +63,7 @@ const main = async () => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [PostResolver, UserResolver],
+      resolvers: [UserResolver],
       validate: false,
     }),
     context: ({ req, res }) => ({
@@ -75,7 +71,6 @@ const main = async () => {
       res,
       redis,
       userLoader: createUserLoader(),
-      updootLoader: createUpdootLoader(),
     }), // Having req allows us to access sessions
   });
 
